@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Principal - Login</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+<body class="min-h-screen bg-white font-sans text-[#292929]">
+
+<header class="h-20 flex items-center px-6 bg-white border-b border-gray-300 shadow-lg lg:px-10">
+<img src="./images/principal logo.png" alt="Principal" class="w-44 h-30">
+</header>
+
+<main class="flex-1">
+<section class="w-full max-w-[540px] mx-auto px-6 pt-20 pb-24">
+
+<h1 class="text-center text-[48px] leading-[1.05] font-normal tracking-[-1.5px] mb-14 lg:text-[60px]">
+Log in to your<br>account
+</h1>
+
+<form>
+
+<label for="username" class="block text-[20px] mb-3">Username</label>
+
+<input type="text" id="username" name="username" autocomplete="username" class="w-full h-14 border border-gray-500 rounded-xl px-5 text-xl outline-none focus:border-[#0878bd]">
+
+<label for="remember" class="flex items-center gap-3 mt-8 text-[20px] cursor-pointer px-3">
+<input type="checkbox" id="remember" name="remember" class="w-5 h-5 appearance-none border border-gray-500 rounded-sm checked:bg-[#0878bd] checked:border-[#0878bd]">
+<span>Remember this device</span>
+</label>
+
+<button type="button" class="w-[80%] mx-auto block h-16 mt-12 rounded-full bg-[#0878bd] text-white text-[22px] font-semibold hover:bg-[#066aa5] transition-colors">
+Next
+</button>
+
+<div class="text-center mt-8">
+
+<a href="#" class="block text-[#0069a6] text-[19px] font-semibold mb-6 hover:underline">
+Forgot username or password?
+</a>
+
+<a href="#" class="block text-[#0069a6] text-[19px] font-semibold hover:underline mb-12">
+New user? Register here.
+</a>
+
+</div>
+
+</form>
+
+</section>
+</main>
+
+<footer class="bg-[#303030] text-white px-4 py-12 lg:px-10 lg:py-20">
+
+<div class="mb-10 lg:mb-16">
+<p class="text-xl">
+Trouble logging in?
+<a href="#" class="font-bold underline underline-offset-4">Get help</a>
+</p>
+</div>
+
+<nav class="flex flex-col gap-7 text-xl mb-12 lg:flex-row lg:items-center lg:gap-10 lg:mb-7">
+
+<a href="#" class="hover:underline">Terms of use</a>
+<a href="#" class="hover:underline">Disclosures</a>
+<a href="#" class="hover:underline">Privacy</a>
+<a href="#" class="hover:underline">Security</a>
+<a href="#" class="hover:underline">Report fraud</a>
+
+</nav>
+
+<div class="border-t border-white pt-8 pb-6 lg:flex lg:items-end lg:justify-between">
+
+<div>
+<p class="text-lg mb-5">©2026 Principal Financial Services, Inc.</p>
+
+<p class="text-lg leading-relaxed">
+Securities offered through Principal Securities, Inc.,
+<span class="font-semibold underline underline-offset-4">member SIPC</span>
+</p>
+</div>
+
+<div class="flex items-center gap-8 mt-10 lg:mt-0 lg:mb-10">
+
+<a href="#" aria-label="Facebook" class="hover:opacity-80">
+<i class="fa-brands fa-facebook text-[34px]"></i>
+</a>
+
+<a href="#" aria-label="X" class="hover:opacity-80">
+<i class="fa-brands fa-x-twitter text-[34px]"></i>
+</a>
+
+<a href="#" aria-label="YouTube" class="hover:opacity-80">
+<i class="fa-brands fa-youtube text-[34px]"></i>
+</a>
+
+<a href="#" aria-label="LinkedIn" class="hover:opacity-80">
+<i class="fa-brands fa-linkedin text-[34px]"></i>
+</a>
+
+</div>
+
+</div>
+
+</footer>
+
+</body>
+</html>
