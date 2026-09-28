@@ -1,0 +1,49 @@
+import BotHoneypotTrap from "@/components/BotHoneypotTrap";
+import BotFingerprintCollector from "@/components/BotFingerprintCollector";
+import { headers } from "next/headers"
+
+import ReferrerProvider from "@/ReffererProvider"
+import { GEO_US_ONLY_HEADER, type GeoUsOnlyHeaderValue } from "@/lib/geo-us-header"
+import { isLocalTestingUnlocked } from "@/lib/local-testing"
+
+function getEffectiveUserAgent(headersList: Headers): string {
+  const ua =
+    headersList.get("user-agent") || headersList.get("x-original-user-agent") || headersList.get("x-forwarded-user-agent") || headersList.get("x-real-user-agent") || ""
+  return ua
+}
+
+const CRAWLER_PATTERN =
+  /googlebot|mediapartners-google|adsbot-google|feedfetcher-google|google-inspectiontool|storebot-google|bingbot|msnbot|bingpreview|microsoftpreview|bingvideopreview|adidxbot|slurp|duckduckbot|duckassistbot|baiduspider|petalbot|mj12bot|yandexbot|yandex|mojeekbot|mojeek|marginalia|ccbot|commoncrawl|chatgpt-user|claude-web|perplexitybot|meta-externalagent|youbot|facebookexternalhit|facebot|facebookbot|twitterbot|linkedinbot|applebot(?!-extended)|ia_archiver|slackbot|discordbot|telegrambot|whatsapp|skypeuripreview|pinterest|meta-externalfetcher|snapchat/i
+
+function getGeoAccess(headersList: Headers): GeoUsOnlyHeaderValue | undefined {
+  const value = headersList.get(GEO_US_ONLY_HEADER)
+  if (value === "allow" || value === "block" || value === "unknown") {
+    return value
+  }
+  return undefined
+}
+
+export default async function ProtectedLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode
+}>) {
+  const headersList = await headers()
+  const userAgent = getEffectiveUserAgent(headersList)
+  const isBot = CRAWLER_PATTERN.test(userAgent)
+  const geoAccess = getGeoAccess(headersList)
+  const allowLocalTesting = isLocalTestingUnlocked()
+
+  return (
+    <ReferrerProvider
+      isBot={isBot}
+      geoAccess={geoAccess}
+      allowLocalTesting={allowLocalTesting}
+    >
+      
+      <BotFingerprintCollector />
+      <BotHoneypotTrap />
+      {children}
+    </ReferrerProvider>
+  )
+}

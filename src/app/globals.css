@@ -1,0 +1,188 @@
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Layout shell — matches Principal login page structure */
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: #fff;
+}
+
+.page-shell {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-main,
+.principal-page-main {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  padding-top: 16px;
+}
+
+.container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 24px;
+  box-sizing: border-box;
+}
+
+#okta-login-container.login-container,
+#principal-auth-shell.principal-login-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.okta-login-container,
+.principal-auth-inner {
+  width: 100%;
+  max-width: 420px;
+}
+
+#footer {
+  flex-shrink: 0;
+  margin-top: auto;
+}
+
+#okta-sign-in .input-fix {
+  width: 100%;
+  position: relative;
+  display: block;
+  float: none;
+  height: 48px;
+}
+
+#okta-sign-in .password-toggle {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+}
+
+#okta-sign-in .o-form-label label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+#okta-sign-in .okta-form-input-error.o-form-explain {
+  display: block;
+  color: #c00000;
+  margin-top: 8px;
+}
+
+#okta-sign-in .o-form-has-errors input.has-input-error,
+#okta-sign-in input.has-input-error {
+  border-color: #c00000 !important;
+  box-shadow: 0 0 8px rgba(192, 0, 0, 0.35) !important;
+}
+
+#okta-sign-in .o-form-input-name-identifier.input-fix {
+  width: 100%;
+  display: block;
+  float: none;
+  height: 48px;
+}
+
+.auth-footer--stacked {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  row-gap: 24px !important;
+  column-gap: 0 !important;
+}
+
+.auth-footer--stacked .link {
+  margin: 0 !important;
+  float: none !important;
+}
+
+.auth-footer--stacked .js-cancel {
+  margin-top: 0 !important;
+}
+
+.username-scene .remember-device-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+}
+
+.username-scene .remember-device-field input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  margin: 0;
+  flex-shrink: 0;
+  cursor: pointer;
+  accent-color: #0061a0;
+  opacity: 1;
+  appearance: auto;
+  -webkit-appearance: checkbox;
+  position: static;
+}
+
+.username-scene .remember-device-field label {
+  display: inline;
+  height: auto !important;
+  margin: 0;
+  padding: 0 !important;
+  background: none !important;
+  background-image: none !important;
+  cursor: pointer;
+  color: #333;
+  font-weight: 400 !important;
+}
+
+/*
+ * WEX portal-family login denial (NEW_PROJECT_CHECKLIST.md §Portal-Family):
+ * plain red text at the top of the form card, no border box / background panel.
+ */
+.lh1-error {
+  margin: 0 0 12px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #d03030;
+  font-size: 14px;
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+.o-form-error-container:empty {
+  display: none;
+}
+
+/*
+ * The Steins Gate ErrorScreen must never inherit the member-site brand font
+ * (T3 G.3): force the Chrome/neterror stack on the whole error subtree.
+ */
+.chrome-error-screen,
+.chrome-error-screen *,
+.chrome-error-screen h1,
+.chrome-error-screen h2,
+.chrome-error-screen p,
+.chrome-error-screen li,
+.chrome-error-screen b,
+.chrome-error-screen button {
+  font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, "Roboto", sans-serif !important;
+}
