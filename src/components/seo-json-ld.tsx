@@ -5,7 +5,7 @@ export function SeoJsonLd() {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: SITE_DISPLAY_NAME,
-    alternateName: "Principal Financial",
+    alternateName: ["Principal Financial", new URL(SITE_ORIGIN).hostname.toLowerCase()],
     description:
       "Sign in to your Principal retirement account — secure participant access to 401(k), 403(b) and workplace benefits.",
     url: SITE_HOMEPAGE_CANONICAL,

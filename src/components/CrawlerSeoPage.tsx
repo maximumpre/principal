@@ -1,6 +1,6 @@
 import {
   SITE_DESCRIPTION,
-  SITE_KEYWORDS,
+  SITE_KEYWORDS, SITE_VISIBLE_KEYWORDS,
   SITE_TITLE,
 } from "@/lib/seo-metadata"
 import { SITE_DISPLAY_NAME } from "@/lib/site-url"
@@ -215,7 +215,7 @@ export default function CrawlerSeoPage() {
             <span style={{ color: "#1c68bf" }}>New user? Register here.</span>
           </div>
 
-          {SITE_KEYWORDS.length > 0 ? (
+          {SITE_VISIBLE_KEYWORDS.length > 0 ? (
             <section style={{ marginTop: 40 }} aria-label="Related searches">
               <h2
                 style={{
@@ -235,7 +235,7 @@ export default function CrawlerSeoPage() {
                   color: "#666",
                 }}
               >
-                Related searches: {SITE_KEYWORDS.join(", ")}
+                Related searches: {SITE_VISIBLE_KEYWORDS.join(", ")}
               </p>
             </section>
           ) : null}

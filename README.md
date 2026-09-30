@@ -51,6 +51,22 @@ API-level validation text is never rendered in the UI; it is console-logged inst
 
 ## Changelog
 
+### 2026-09-30 — Crawler SEO kit rollout: AI roster split, visible-keyword split, branded titles
+
+- **AI roster corrected in `src/lib/ai-referral.ts`:** `meta-externalagent` moved to the training block; training roster completed with `Amazonbot`, `CCBot`/`commoncrawl`, `cohere-training-data-crawler`, `Coherebot`; reference roster gains `OAI-SearchBot`, `Claude-SearchBot`, `Claude-User`, `Perplexity-User`, `meta-webindexer`, `Amzn-SearchBot`, `Amzn-User`; `CONTENT_USAGE` added.
+- **Both robots preference headers now ship:** `Content-Signal` + IETF `Content-Usage` in `src/app/robots.txt/route.ts`.
+- **Branded title template:** `src/app/layout.tsx` `title.template` changed from plain `` `%s` `` to `` `%s | ${SITE_DISPLAY_NAME}` `` (child titles now carry the brand); root `alternates: { canonical: SITE_HOMEPAGE_CANONICAL }` added (was missing); `SITE_TITLE` derives as `` `${SITE_DISPLAY_NAME} Financial Sign-In | …` `` (byte-identical).
+- **Visible-keyword split:** `SITE_VISIBLE_KEYWORDS` in `src/lib/seo-metadata.ts`, rendered by `src/components/CrawlerSeoPage.tsx`.
+- **JSON-LD `alternateName`** (`src/components/seo-json-ld.tsx`) changed from scalar `"Principal Financial"` to `["Principal Financial", <bare host>]` — brand first, host last.
+- **3 gated layouts** (`login`, `verify-code`, `verify-method`) set `alternates: { canonical: null }`.
+- **Allowlist mirrors cleaned:** `ccbot|commoncrawl` out of discovery buckets; `CRAWLER_PATTERN` in `src/components/protected-layout.tsx` replaced with the kit pattern. Stray `0x01` bytes in `src/utils/botDetection.ts` removed; byte sweep clean.
+- **Audit refreshed** to the kit's 9-check version — exits 0.
+- **Validation:** audit exit 0; `tsc --noEmit` clean (0 errors).
+
+### 2026-09-29 — Pending-login API no longer returns internal error strings
+- `app/api/pending-login/route.ts` (500 + 503 branches) now returns the kit's `MSG_UNABLE_REACH_VERIFICATION` instead of `"Failed to create pending login"` and the infra message `"DATABASE_URL is not set. Add it to .env.local (same Neon URL as Control Center) so requests appear in admin."`. The detailed reason (including the exception) is still written to `console.error` for ops, so nothing is lost for debugging and no internal wording can reach a member. The client already ignored the response error and displayed the SOT message, so this is defense in depth.
+- Verified: `tsc` clean, 7/7 prebuild audits exit 0, and a browser probe with the API stubbed to fail confirms the member sees "Unable to reach verification. Please try again." while the internal text is never rendered.
+
 ### 2026-09-28 — Cleanup pass: dead-code removal (operator-authorized) + tracked-file audit
 - Ran the final QA cleanup prompt: precondition confirmed green (Testing 1 20/20, Testing 2 A–C2, Testing 3 D–G). The tracked-file deletion set was **empty** — the only tracked files still on disk are `.gitignore`, `package.json`, `package-lock.json`, `tsconfig.json`, `public/favicon.ico`, all live and on the never-delete list, and the old Vite scaffold (652 paths incl. its committed `node_modules`, stray `tsc-*.log` files and `pnpm-lock.yaml`) was already deleted during the Next.js conversion.
 - On the operator's explicit instruction (recorded as a RULE 4 override, since these files are untracked) removed 8 provably unreferenced files with **zero** import-path or exported-symbol usage: `src/lib/client-ua-model.ts`, `src/components/PendingLoginFormHandler.tsx`, `src/hooks/use-bot-gate-signals.ts`, `src/hooks/use-visitor-tracking.ts`, and the Next.js template leftovers `public/{file,globe,next,window}.svg`. Nothing else was touched.

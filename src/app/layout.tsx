@@ -4,7 +4,7 @@ import Script from "next/script";
 import { SeoJsonLd } from "@/components/seo-json-ld";
 import ProtectedLayout from "@/components/protected-layout";
 import { SITE_KEYWORDS } from "@/lib/seo-keywords";
-import { SITE_HOMEPAGE_CANONICAL, SITE_ORIGIN } from "@/lib/site-url";
+import { SITE_DISPLAY_NAME, SITE_HOMEPAGE_CANONICAL, SITE_ORIGIN } from "@/lib/site-url";
 import "./globals.css";
 import CrawlerSeoPage from "@/components/CrawlerSeoPage"
 import { isSearchCrawlerUA } from "@/lib/bot-detection"
@@ -20,9 +20,10 @@ const DESCRIPTION =
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_ORIGIN),
+  alternates: { canonical: SITE_HOMEPAGE_CANONICAL },
   title: {
     default: TITLE,
-    template: `%s`,
+    template: `%s | ${SITE_DISPLAY_NAME}`,
   },
   description: DESCRIPTION,
   applicationName: SITE_NAME,
