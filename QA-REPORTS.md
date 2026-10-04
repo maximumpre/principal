@@ -6,6 +6,28 @@ Dev server: port **3010** (the project's own `npm run dev` launcher picks the fi
 never toggled (the crawler-header path was used instead). Lock-state changes for the cloak/alerts rows used a
 **shell-only** `ALLOW_LOCAL_TESTING=false` override, never an env edit.
 
+> ### ⚠️ Reading the referrer-gate rows in this report
+>
+> `.env.local` ships `ALLOW_LOCAL_TESTING=true`, which **bypasses the referrer gate outright** — not a
+> partial relaxation. `ReffererProvider.tsx` grants access on `allowLocalTesting` before `document.referrer`
+> is read, so on a default local server a **direct visit renders the login form** instead of the ErrorScreen,
+> and denied-bot cloaking is off as well.
+>
+> **Any referrer-gate or direct-visit observation taken on a default local server is invalid** and must not
+> be recorded as a pass or as a bug. The G.1/G.2 lock rows below were captured under a shell-only
+> `ALLOW_LOCAL_TESTING=false` override; reproduce that way:
+>
+> ```bash
+> ALLOW_LOCAL_TESTING=false npm run dev
+> ```
+>
+> Inverse limitation, confirmed 2026-09-30: under that override a **legitimate** search referrer is *also*
+> locked, because `/api/visitor-geo` returns `{"isUs":false,"countryCode":null}` for `127.0.0.1` and
+> `ReffererProvider` requires the US-geo check to pass on the public entry path `/`. The referrer itself is
+> detected correctly. So locally you can verify **locking**, not **granting**.
+>
+> Production is unaffected: `lib/local-testing.ts` hard-returns `false` when `NODE_ENV === "production"`.
+
 | Suite | Verdict |
 |---|---|
 | Testing 1 — UI/UX, error placement, input flow | **20/20 PASS** |

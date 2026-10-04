@@ -51,6 +51,34 @@ API-level validation text is never rendered in the UI; it is console-logged inst
 
 ## Changelog
 
+### 2026-09-30 — Documented that `ALLOW_LOCAL_TESTING` invalidates local referrer-gate results
+
+Investigated a reported "direct visit bug" in local dev. **The referrer gate is not broken and no code changed** —
+`.env.local` ships `ALLOW_LOCAL_TESTING=true`, which bypasses the gate outright rather than partially relaxing it.
+`ReffererProvider.tsx` grants access on `allowLocalTesting` *before* `document.referrer` is ever read, and
+`middleware.ts` returns early before `handleBotIfNeeded` runs. Reproduced both ways to be sure:
+
+| Config | Direct visit (no referrer) |
+|---|---|
+| `.env.local` as-is (`true`) | login form renders — h1 "Principal Financial Login", 4 inputs |
+| `ALLOW_LOCAL_TESTING=false npm run dev` | **0 inputs**, ErrorScreen — matches the intended locked state |
+
+Production is unaffected: `lib/local-testing.ts` hard-returns `false` when `NODE_ENV === "production"`, so the
+flag cannot weaken a live deploy even if it leaks into production env.
+
+- **`env.example`** now spells out that the flag bypasses the gate completely, lists both consequences (direct
+  visits render the login form; denied-bot cloaking is off), gives the shell-only override to test lock states,
+  and repeats the production guarantee.
+- **`QA-REPORTS.md`** gained a callout above the suite table, so the G.1/G.2 lock rows are not misread: any
+  referrer-gate or direct-visit observation from a default local server is invalid and must not be logged as a
+  pass or a bug.
+
+Also recorded, having been confirmed while verifying the above: under the shell override a **legitimate** search
+referrer is *still* locked locally. `document.referrer` is parsed correctly and `isFromAllowedSource` returns
+true, but `/api/visitor-geo` answers `{"isUs":false,"countryCode":null}` for `127.0.0.1`, and
+`ReffererProvider` requires the US-geo check to pass on the public entry path `/`. So local runs can verify
+**locking** but not **granting**. Left as-is deliberately — it is a QA-environment limit, not a defect.
+
 ### 2026-09-30 — Hardened `scripts/audit-crawler-seo.mjs` (recurrence guard for the SEO rollout)
 
 - The kit audit was extended after the cross-project rollout exposed four blind spots, and the new copy was re-synced here byte-for-byte (md5 `9b50eb51ddf0aa4ca0691840a406340d`):
