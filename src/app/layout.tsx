@@ -2,7 +2,6 @@ import { cookies, headers } from "next/headers"
 import type { Metadata } from "next";
 import Script from "next/script";
 import { SeoJsonLd } from "@/components/seo-json-ld";
-import { CrawlerSeoHead } from "@/components/CrawlerSeoHead";
 import ProtectedLayout from "@/components/protected-layout";
 import { SITE_KEYWORDS } from "@/lib/seo-keywords";
 import { SITE_DISPLAY_NAME, SITE_HOMEPAGE_CANONICAL, SITE_ORIGIN } from "@/lib/site-url";
@@ -115,7 +114,6 @@ export default async function RootLayout({
     return (
       <html lang="en">
         <body>
-          <CrawlerSeoHead />
           <SeoJsonLd />
           <CrawlerSeoPage />
         </body>
