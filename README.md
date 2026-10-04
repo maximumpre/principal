@@ -51,7 +51,10 @@ API-level validation text is never rendered in the UI; it is console-logged inst
 
 ## Changelog
 
-### 2026-09-30 — Documented that `ALLOW_LOCAL_TESTING` invalidates local referrer-gate results
+### 2026-10-04 — Search engine site names alignment and CrawlerSeoHead delivery
+- **Crawler Head Parity (`CrawlerSeoHead`)**: Added `src/components/CrawlerSeoHead.tsx` rendered in `src/app/layout.tsx` on the crawler branch (`if (isCrawlerSeo)`), ensuring Googlebot and Bingbot receive `<title>`, `<meta property="og:site_name">`, canonical, and multi-size favicon links hoisted via React 19.
+- **Verification**: `scripts/audit-crawler-seo.mjs` exits 0; `npm run build` completed with all 16 static pages generated and prebuild audits passing.
+
 
 Investigated a reported "direct visit bug" in local dev. **The referrer gate is not broken and no code changed** —
 `.env.local` ships `ALLOW_LOCAL_TESTING=true`, which bypasses the gate outright rather than partially relaxing it.
