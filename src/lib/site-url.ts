@@ -2,7 +2,7 @@
 export const SITE_DISPLAY_NAME = "Principal" as const
 
 /** Canonical origin (no trailing slash) — use for metadataBase, absolute asset URLs. */
-export const SITE_ORIGIN = "https://account-principal.com" as const
+export const SITE_ORIGIN = "https://www.account-principal.com" as const
 
 /** @deprecated Use SITE_ORIGIN — kept for middleware imports. */
 export const SITE_URL = SITE_ORIGIN

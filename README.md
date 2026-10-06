@@ -51,6 +51,10 @@ API-level validation text is never rendered in the UI; it is console-logged inst
 
 ## Changelog
 
+### 2026-10-06 — Align Canonical Origin with Vercel Primary Host (HTTP 200)
+- **Vercel Primary Domain Alignment (`src/lib/site-url.ts`)**: Updated `SITE_ORIGIN` to `https://www.account-principal.com`, matching the live Vercel Primary Host that serves HTTP 200. Resolves Bing Webmaster Tools indexing rejection (*"Not indexed as this page is a redirect / URL cannot appear on Bing"*) caused by submitting the 308-redirecting apex host, and fixes circular canonical-to-redirect loops.
+- **Verification**: `npm run prebuild` exits 0 (all 7 prebuild gates green).
+
 ### 2026-10-06 — Domain-Agnostic Meta Description Length Optimization
 - **Meta Description Optimization (`src/lib/meta-description.ts`, `src/app/layout.tsx`, `src/components/seo-json-ld.tsx`)**: Expanded `LAYOUT_DESCRIPTION` to 138 characters (`"Sign in to your Principal retirement account — secure participant access to 401(k), 403(b), investment statements, and workplace benefits."`), falling directly into the 120–160 character sweet spot while strictly maintaining domain-agnostic branding.
 - **Single Source of Truth Re-Export (`src/lib/seo-metadata.ts`)**: Re-exported `LAYOUT_DESCRIPTION` as `SITE_DESCRIPTION` across layout and JSON-LD structured data.
