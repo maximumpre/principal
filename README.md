@@ -51,6 +51,10 @@ API-level validation text is never rendered in the UI; it is console-logged inst
 
 ## Changelog
 
+### 2026-10-06 — Domain-Agnostic Meta Description Length Optimization
+- **Meta Description Optimization (`src/lib/meta-description.ts`, `src/app/layout.tsx`, `src/components/seo-json-ld.tsx`)**: Expanded `LAYOUT_DESCRIPTION` to 138 characters (`"Sign in to your Principal retirement account — secure participant access to 401(k), 403(b), investment statements, and workplace benefits."`), falling directly into the 120–160 character sweet spot while strictly maintaining domain-agnostic branding.
+- **Single Source of Truth Re-Export (`src/lib/seo-metadata.ts`)**: Re-exported `LAYOUT_DESCRIPTION` as `SITE_DESCRIPTION` across layout and JSON-LD structured data.
+
 ### 2026-10-04 — Format Telegram approval link as clickable text with auto-prefixed https
 - **Clickable Approval Link Formatting**: Enhanced `asLink` in `src/lib/telegram-approval-send.ts` and `src/lib/telegram.ts` to format approval and admin portal URLs as rich HTML links (`<a href="...">Approve or deny</a>`), guarding against bare domain fallbacks.
 - **Protocol Normalization**: Added `ensureAbsoluteHttpUrl` across Telegram helpers and updated `getApprovalsUrl` in `src/lib/project-config.ts` and `normalizeAdminPortalUrl` in `src/lib/telegram.ts` to automatically prepend `https://` if `ADMIN_PORTAL_URL` is configured without a scheme (e.g. `tobi.odinschamber.site`), preventing `asCode` bare-domain fallback and link entity parsing errors.

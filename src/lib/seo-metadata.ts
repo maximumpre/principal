@@ -3,11 +3,12 @@
  */
 
 import { CANONICAL_HOST, SITE_DISPLAY_NAME } from "@/lib/site-url"
+import { LAYOUT_DESCRIPTION } from "./meta-description"
 import { SITE_KEYWORDS } from "./seo-keywords"
 export const SITE_TITLE = `${SITE_DISPLAY_NAME} Financial Sign-In | Retirement & Benefits`
 
-export const SITE_DESCRIPTION =
-  "Sign in to your Principal retirement account — secure participant access to 401(k), 403(b) and workplace benefits."
+export const SITE_DESCRIPTION = LAYOUT_DESCRIPTION
+export { LAYOUT_DESCRIPTION }
 
 export { SITE_KEYWORDS } from "./seo-keywords"
 

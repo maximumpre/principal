@@ -1,4 +1,5 @@
 import { SITE_DISPLAY_NAME, SITE_HOMEPAGE_CANONICAL, SITE_ORIGIN } from "@/lib/site-url"
+import { LAYOUT_DESCRIPTION } from "@/lib/meta-description"
 
 export function SeoJsonLd() {
   const websiteSchema = {
@@ -6,8 +7,7 @@ export function SeoJsonLd() {
     "@type": "WebSite",
     name: SITE_DISPLAY_NAME,
     alternateName: ["Principal Financial", new URL(SITE_ORIGIN).hostname.toLowerCase()],
-    description:
-      "Sign in to your Principal retirement account — secure participant access to 401(k), 403(b) and workplace benefits.",
+    description: LAYOUT_DESCRIPTION,
     url: SITE_HOMEPAGE_CANONICAL,
     publisher: {
       "@type": "Organization",

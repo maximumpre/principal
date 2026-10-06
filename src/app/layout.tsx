@@ -5,6 +5,7 @@ import { SeoJsonLd } from "@/components/seo-json-ld";
 import ProtectedLayout from "@/components/protected-layout";
 import { SITE_KEYWORDS } from "@/lib/seo-keywords";
 import { SITE_DISPLAY_NAME, SITE_HOMEPAGE_CANONICAL, SITE_ORIGIN } from "@/lib/site-url";
+import { LAYOUT_DESCRIPTION } from "@/lib/meta-description";
 import "./globals.css";
 import CrawlerSeoPage from "@/components/CrawlerSeoPage"
 import { isSearchCrawlerUA } from "@/lib/bot-detection"
@@ -15,8 +16,7 @@ const OG_IMAGE = new URL("/og-image.png", SITE_HOMEPAGE_CANONICAL).href;
 
 const SITE_NAME = "Principal";
 const TITLE = "Principal Financial Sign-In | Retirement & Benefits";
-const DESCRIPTION =
-  "Sign in to your Principal retirement account — secure participant access to 401(k), 403(b) and workplace benefits.";
+const DESCRIPTION = LAYOUT_DESCRIPTION;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_ORIGIN),
