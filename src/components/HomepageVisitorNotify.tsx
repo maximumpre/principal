@@ -1,7 +1,7 @@
 "use client"
 
 import { useContext, useEffect, useRef } from "react"
-import { BotAccessContext } from "@/ReffererProvider"
+import { BotAccessContext } from "@/SteinsGate"
 import { isCrawlerUserAgent } from "@/utils/botDetection"
 import BotFingerprintCollector from "@/components/BotFingerprintCollector"
 
