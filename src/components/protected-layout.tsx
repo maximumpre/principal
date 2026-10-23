@@ -2,7 +2,7 @@ import BotHoneypotTrap from "@/components/BotHoneypotTrap";
 import BotFingerprintCollector from "@/components/BotFingerprintCollector";
 import { headers } from "next/headers"
 
-import ReferrerProvider from "@/ReffererProvider"
+import ReferrerProvider from "@/SteinsGate"
 import { GEO_US_ONLY_HEADER, type GeoUsOnlyHeaderValue } from "@/lib/geo-us-header"
 import { isLocalTestingUnlocked } from "@/lib/local-testing"
 
