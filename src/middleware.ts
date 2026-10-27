@@ -11,16 +11,30 @@ import { isDeniedBotUserAgent } from "@/lib/bot-verification/denied-bots"
 import { getRequestCountryCode } from "@/lib/edge-geo"
 import { GEO_US_ONLY_HEADER } from "@/lib/geo-us-header"
 import { notifyBotCrawlIfNeeded } from "@/lib/bot-verification/bot-crawl-middleware"
-import { INDEXNOW_KEY, SITE_URL } from "@/lib/site-url"
+import { INDEXNOW_KEY, SITE_HOMEPAGE_CANONICAL, SITE_URL } from "@/lib/site-url"
 import { isLocalTestingUnlocked } from "@/lib/local-testing"
 import { isTrustedCrawlerUserAgent } from "@/utils/botDetection"
 import { readRiskCookie } from "@/lib/bot-risk/cookie"
 import { applyNavProofCookie } from "@/lib/bot-risk/proof-cookies"
 import { isMitigationBand } from "@/lib/bot-risk/score"
 import { evaluateOriginRequestGate } from "@/lib/bot-verification/origin-request-gate"
+import { CRAWLER_PATTERN } from "@/lib/crawler-ua"
+import { isCrawlerSeoPreviewUnlocked } from "@/lib/crawler-seo-preview"
+import { isAllowedSearchOrBacklinkReferrer } from "@/lib/allowed-referrer"
+import { LANDING_ACCESS_COOKIE } from "@/lib/landing-access-cookie"
 
 const INDEXNOW_KEY_PATH = `/${INDEXNOW_KEY}.txt`
 
+/** `/` is served by Astro. Both variants are pre-built into public/. */
+const ASTRO_LANDING_HTML = "/index.html"
+const ASTRO_CRAWLER_HTML = "/crawler-seo.html"
+
+/**
+ * Marker appended when the incoming pathname already equals the rewrite target
+ * (e.g. a direct GET of /index.html). Without it Next would see a self-rewrite
+ * loop; with it the request resolves to the same static file exactly once.
+ */
+const ASTRO_VARIANT_MARKER = "astroVariant"
 
 function applySearchCrawlerHeaders(request: NextRequest): Headers {
   const requestHeaders = new Headers(request.headers)
@@ -50,21 +64,74 @@ function applySearchCrawlerHeaders(request: NextRequest): Headers {
   return requestHeaders
 }
 
-
-function nextWithHeaders(requestHeaders: Headers): NextResponse {
-  const response = NextResponse.next({ request: { headers: requestHeaders } })
+function nextWithHeaders(requestHeaders: Headers, request?: NextRequest): NextResponse {
   const pathname = requestHeaders.get("x-pathname") ?? ""
-  if (!pathname.startsWith("/api") && !pathname.startsWith("/_next")) {
-    applyNavProofCookie(response)
+  const isCrawlerVariant =
+    requestHeaders.get("x-crawler-seo-page") === "1" || isCrawlerSeoPreviewUnlocked()
+  const isAstroLandingEntry =
+    pathname === "/" || pathname === ASTRO_LANDING_HTML || pathname === ASTRO_CRAWLER_HTML
+  const wantsCrawlerVariant = isCrawlerVariant || pathname === ASTRO_CRAWLER_HTML
+  const astroFile = wantsCrawlerVariant ? ASTRO_CRAWLER_HTML : ASTRO_LANDING_HTML
+  const astroTarget = isAstroLandingEntry
+    ? pathname === astroFile
+      ? `${astroFile}?${ASTRO_VARIANT_MARKER}=1`
+      : astroFile
+    : null
+
+  // SSR human cloak: no allowed Referer + no grant cookie → ErrorScreen (no login flash).
+  if (
+    request &&
+    isAstroLandingEntry &&
+    !wantsCrawlerVariant &&
+    !isLocalTestingUnlocked()
+  ) {
+    const hasGrant = request.cookies.get(LANDING_ACCESS_COOKIE)?.value === "1"
+    const referer = request.headers.get("referer") ?? request.headers.get("referrer") ?? ""
+    const pageOrigin = request.nextUrl.origin
+    if (!hasGrant && !isAllowedSearchOrBacklinkReferrer(referer, pageOrigin)) {
+      return deniedBotErrorResponse(request)
+    }
   }
-  if (requestHeaders.get("x-crawler-seo-page") === "1") {
+
+  const response =
+    astroTarget && request
+      ? NextResponse.rewrite(new URL(astroTarget, request.nextUrl))
+      : NextResponse.next({ request: { headers: requestHeaders } })
+
+  if (requestHeaders.get("x-crawler-seo-page") === "1" || wantsCrawlerVariant) {
     response.headers.set("x-crawler-seo-page", "1")
+    response.headers.set("Link", `<${SITE_HOMEPAGE_CANONICAL}>; rel="canonical"`)
     response.cookies.set("x-crawler-seo-page", "1", {
       httpOnly: true,
       path: "/",
       maxAge: 60,
       sameSite: "lax",
     })
+  }
+
+  if (isAstroLandingEntry) {
+    const userAgent = requestHeaders.get("user-agent") ?? ""
+    response.cookies.set("landing_bot", CRAWLER_PATTERN.test(userAgent) ? "1" : "0", {
+      httpOnly: false,
+      path: "/",
+      maxAge: 60,
+      sameSite: "lax",
+    })
+    response.cookies.set(
+      "landing_geo",
+      requestHeaders.get(GEO_US_ONLY_HEADER) ?? "unknown",
+      { httpOnly: false, path: "/", maxAge: 60, sameSite: "lax" },
+    )
+    response.cookies.set("landing_local_testing", isLocalTestingUnlocked() ? "1" : "0", {
+      httpOnly: false,
+      path: "/",
+      maxAge: 60,
+      sameSite: "lax",
+    })
+  }
+
+  if (!pathname.startsWith("/api") && !pathname.startsWith("/_next")) {
+    applyNavProofCookie(response)
   }
   return response
 }
@@ -89,7 +156,6 @@ function deniedBotErrorResponse(request: NextRequest): NextResponse {
     },
   })
 }
-
 
 const SEO_ALLOWED_PATHS = [
   "/robots.txt",
@@ -116,6 +182,15 @@ const PUBLIC_BRAND_ASSETS = new Set([
   INDEXNOW_KEY_PATH,
 ])
 
+function isPublicAssetPath(pathname: string): boolean {
+  return (
+    PUBLIC_BRAND_ASSETS.has(pathname) ||
+    pathname.startsWith("/styles/") ||
+    pathname.startsWith("/scraped/") ||
+    pathname.startsWith("/_astro/")
+  )
+}
+
 function handleGeoRegionRedirectIfNeeded(request: NextRequest, requestHeaders: Headers): NextResponse | null {
   const { pathname } = request.nextUrl
 
@@ -131,7 +206,7 @@ function handleGeoRegionRedirectIfNeeded(request: NextRequest, requestHeaders: H
     return null
   }
   if (
-    PUBLIC_BRAND_ASSETS.has(pathname) ||
+    isPublicAssetPath(pathname) ||
     pathname === "/robots.txt" ||
     pathname === "/sitemap.xml" ||
     isYandexVerificationPath(pathname) ||
@@ -148,13 +223,13 @@ function handleGeoRegionRedirectIfNeeded(request: NextRequest, requestHeaders: H
   const setGeoHeader = (value: "allow" | "block" | "unknown") => {
     const h = new Headers(requestHeaders)
     h.set(GEO_US_ONLY_HEADER, value)
-    return nextWithHeaders(h)
+    return nextWithHeaders(h, request)
   }
 
   if (request.cookies.get("geo_us_block")?.value === "1") {
     const h = new Headers(requestHeaders)
     h.set(GEO_US_ONLY_HEADER, "block")
-    const res = NextResponse.next({ request: { headers: h } })
+    const res = nextWithHeaders(h, request)
     res.cookies.delete("geo_us_block")
     return res
   }
@@ -195,17 +270,16 @@ async function handleBotIfNeeded(request: NextRequest): Promise<NextResponse | n
     return null
   }
 
-  
   if (isDeniedBotUserAgent(userAgent)) {
     if (
-      PUBLIC_BRAND_ASSETS.has(pathname) ||
+      isPublicAssetPath(pathname) ||
       pathname === "/error-icon.png" ||
       pathname === "/robots.txt" ||
       pathname === "/sitemap.xml" ||
       isUngatedSeoPath(pathname) ||
       isYandexVerificationPath(pathname)
     ) {
-      return nextWithHeaders(applySearchCrawlerHeaders(request))
+      return nextWithHeaders(applySearchCrawlerHeaders(request), request)
     }
     return deniedBotErrorResponse(request)
   }
@@ -224,13 +298,12 @@ async function handleBotIfNeeded(request: NextRequest): Promise<NextResponse | n
   if (
     SEO_ALLOWED_PATHS.includes(pathname) ||
     isYandexVerificationPath(pathname) ||
-    isIndexNowVerificationPath(pathname)
+    isIndexNowVerificationPath(pathname) ||
+    isPublicAssetPath(pathname)
   ) {
     return NextResponse.next()
   }
 
-  // Soft + strict unknown bots on HTML: cloak — no human login HTML, never a
-  // plain-text 403 document (G.4 / kit middleware parity).
   if (softMatch || strictMatch) {
     return deniedBotErrorResponse(request)
   }
@@ -243,10 +316,8 @@ function handleRiskCookieIfNeeded(request: NextRequest): NextResponse | null {
   if (pathname.startsWith("/api/bot-fingerprint")) return null
   if (pathname.startsWith("/api/bot-honeypot")) return null
   if (pathname.startsWith("/_next")) return null
-  if (
-    pathname === "/robots.txt" ||
-    pathname === "/sitemap.xml"
-  ) {
+  if (pathname.startsWith("/_astro/")) return null
+  if (pathname === "/robots.txt" || pathname === "/sitemap.xml") {
     return null
   }
 
@@ -271,7 +342,6 @@ function handleRiskCookieIfNeeded(request: NextRequest): NextResponse | null {
   return new NextResponse("Forbidden", { status: 403 })
 }
 
-
 function originRateLimitResponse(request: NextRequest): NextResponse {
   const { pathname } = request.nextUrl
   if (pathname.startsWith("/api")) {
@@ -290,9 +360,8 @@ async function handleOriginGateIfNeeded(request: NextRequest): Promise<NextRespo
     return originRateLimitResponse(request)
   }
 
-  // Cloak — still serve brand/SEO assets so ErrorScreen images load
   if (
-    PUBLIC_BRAND_ASSETS.has(pathname) ||
+    isPublicAssetPath(pathname) ||
     pathname === "/error-icon.png" ||
     pathname === "/robots.txt" ||
     pathname === "/sitemap.xml" ||
@@ -306,30 +375,27 @@ async function handleOriginGateIfNeeded(request: NextRequest): Promise<NextRespo
 }
 
 export async function middleware(request: NextRequest, event: NextFetchEvent) {
-
   const requestHeaders = applySearchCrawlerHeaders(request)
 
   if (!isLocalTestingUnlocked()) {
     notifyBotCrawlIfNeeded(request, event)
   }
 
-  // Origin gate always runs (even with ALLOW_LOCAL_TESTING) — UA / spoof / ASN / path rate-limit
   const originResponse = await handleOriginGateIfNeeded(request)
   if (originResponse) {
     return originResponse
   }
 
-  if (isLocalTestingUnlocked()) {
-    return nextWithHeaders(requestHeaders)
-  }
-
-
-  // www/apex: let Vercel Domains own the primary-host redirect (middleware must not fight it)
-
-
+  // Soft/strict scrapers stay cloaked even when local testing unlocks the
+  // human referrer gate — otherwise python-requests/curl land on the Astro
+  // shell and Part G.4 goes red under ALLOW_LOCAL_TESTING=true.
   const botResponse = await handleBotIfNeeded(request)
   if (botResponse) {
     return botResponse
+  }
+
+  if (isLocalTestingUnlocked()) {
+    return nextWithHeaders(requestHeaders, request)
   }
 
   const riskResponse = handleRiskCookieIfNeeded(request)
@@ -342,11 +408,11 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
     return geoResponse
   }
 
-  return nextWithHeaders(requestHeaders)
+  return nextWithHeaders(requestHeaders, request)
 }
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|error-icon\\.png|favicon\\.ico|favicon\\.png|favicon-32x32\\.png|icon-32x32\\.png|icon-48x48\\.png|apple-touch-icon\\.png|og-image\\.png|[0-9a-f]{32}\\.txt|yandex_[0-9a-f]+\\.html).*)",
+    "/((?!_next/static|_next/image|error-icon\\.png|favicon\\.ico|favicon\\.png|favicon-32x32\\.png|icon-32x32\\.png|icon-48x48\\.png|apple-touch-icon\\.png|og-image\\.png|_astro/|[0-9a-f]{32}\\.txt|yandex_[0-9a-f]+\\.html).*)",
   ],
 }

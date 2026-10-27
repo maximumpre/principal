@@ -1,0 +1,340 @@
+---
+/**
+ * Allowlisted-bot landing surface for Principal sign-in.
+ * DOM: header → breadcrumb → login → rich copy → FAQ → Related searches → footer.
+ */
+import "../../src/app/globals.css"
+import "../styles/astro-font.css"
+import SeoHead from "../components/seo-head.astro"
+import { SeoJsonLd } from "@/components/seo-json-ld"
+import { SITE_DESCRIPTION, SITE_VISIBLE_KEYWORDS } from "@/lib/seo-metadata"
+import { SITE_DISPLAY_NAME } from "@/lib/site-url"
+import { BRAND_LOGO_SRC } from "../lib/brand-images"
+
+const visibleKeywords = SITE_VISIBLE_KEYWORDS.join(", ")
+
+const FAQ_ITEMS = [
+  {
+    question: `How do I sign in to my ${SITE_DISPLAY_NAME} retirement account?`,
+    answer:
+      "Enter your username on this page and select Next, then enter your password and complete Verify. If multi-factor authentication or a passkey is enabled, confirm the one-time code or biometric prompt before you reach your participant dashboard.",
+  },
+  {
+    question: `How do I retrieve a forgotten username or reset my ${SITE_DISPLAY_NAME} password?`,
+    answer:
+      "Use Forgot username or password on the sign-in card. Confirm your identity with the information on file, then enter the verification code sent by text, voice call, email, or authenticator app. After verification you can view your username and set a new password.",
+  },
+  {
+    question: `Where can I manage my ${SITE_DISPLAY_NAME} 401(k), 403(b), or pension savings?`,
+    answer:
+      "After you sign in, open your workplace retirement plan to review balances, contribution rates, employer match, investment allocations, and participant statements. Availability of loans, hardship withdrawals, and rollovers depends on your specific plan rules.",
+  },
+  {
+    question: "How do I adjust paycheck contribution rates or review fund options?",
+    answer:
+      "From your authenticated retirement dashboard, update pre-tax or Roth contribution percentages and review target-date funds or other investment options offered by your plan. Changes typically take effect on the next available payroll cycle according to plan administration.",
+  },
+  {
+    question: "How do I update beneficiaries or download statements and tax documents?",
+    answer:
+      "Sign in, open My profile or My documents, then update primary and contingent beneficiaries or download statements and tax forms for your retirement and benefits products. You can also manage e-delivery preferences for statements under profile settings.",
+  },
+  {
+    question: `Can I use the ${SITE_DISPLAY_NAME} mobile app or call for login help?`,
+    answer:
+      "Yes. Download the Principal app from the App Store or Google Play to check balances, change contributions, and review benefits on the go. For live login assistance call 800-986-3343, Monday–Friday, 7 a.m.–7 p.m. CT.",
+  },
+] as const
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: FAQ_ITEMS.map((item) => ({
+    "@type": "Question",
+    name: item.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: item.answer,
+    },
+  })),
+}
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <SeoHead />
+    <SeoJsonLd />
+  </head>
+  <body
+    style="min-height:100vh;width:100%;background:#ffffff;color:#1a1a1a;margin:0;display:flex;flex-direction:column;font-family:Arial,'Helvetica Neue',Helvetica,sans-serif;"
+  >
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+    <header
+      style="border-bottom:1px solid #e5e5e5;padding:16px 24px;display:flex;align-items:center;gap:12px;"
+    >
+      <img
+        src={BRAND_LOGO_SRC}
+        alt={`${SITE_DISPLAY_NAME} logo`}
+        width="160"
+        height="40"
+        style="display:block;height:40px;width:auto;"
+      />
+      <span style="font-size:18px;font-weight:600;color:#1c68bf;letter-spacing:-0.02em;">
+        {SITE_DISPLAY_NAME}
+      </span>
+    </header>
+
+    <main
+      style="flex:1;display:flex;flex-direction:column;align-items:center;padding:32px 24px 40px;width:100%;box-sizing:border-box;"
+    >
+      <div style="width:100%;max-width:720px;">
+        <nav aria-label="Breadcrumb" style="margin-bottom:20px;font-size:12px;color:#666;">
+          <ol style="list-style:none;margin:0;padding:0;display:flex;gap:6px;align-items:center;">
+            <li>
+              <a href="/" style="color:#1c68bf;text-decoration:none;">Home</a>
+            </li>
+            <li aria-hidden="true">›</li>
+            <li style="color:#1a1a1a;font-weight:600;" aria-current="page">Sign In</li>
+          </ol>
+        </nav>
+
+        <div
+          style="width:100%;max-width:420px;margin:0 auto;border:1px solid #ddd;border-radius:4px;padding:32px 28px;box-sizing:border-box;box-shadow:0 2px 8px rgba(0,0,0,0.06);"
+        >
+          <h1 style="font-size:22px;font-weight:600;margin:0 0 8px;color:#1a1a1a;">
+            {SITE_DISPLAY_NAME}
+          </h1>
+          <p style="font-size:14px;color:#555;line-height:1.5;margin:0 0 24px;">
+            {SITE_DESCRIPTION}
+          </p>
+
+          <form
+            method="get"
+            action="/"
+            autocomplete="off"
+            aria-label={`${SITE_DISPLAY_NAME} participant sign in`}
+          >
+            <label
+              for="crawler-username"
+              style="display:block;font-size:14px;font-weight:600;margin-bottom:8px;color:#333;"
+            >
+              Username
+            </label>
+            <input
+              id="crawler-username"
+              type="text"
+              name="username"
+              disabled
+              readonly
+              aria-disabled="true"
+              style="width:100%;box-sizing:border-box;height:48px;border:1px solid #8c8c8c;border-radius:3px;padding:10px 12px;margin-bottom:16px;font-size:15px;background:#fff;"
+            />
+
+            <label
+              for="crawler-password"
+              style="display:block;font-size:14px;font-weight:600;margin-bottom:8px;color:#333;"
+            >
+              Password
+            </label>
+            <input
+              id="crawler-password"
+              type="password"
+              name="password"
+              disabled
+              readonly
+              aria-disabled="true"
+              style="width:100%;box-sizing:border-box;height:48px;border:1px solid #8c8c8c;border-radius:3px;padding:10px 12px;margin-bottom:16px;font-size:15px;background:#fff;"
+            />
+
+            <label
+              style="display:flex;align-items:center;gap:8px;font-size:14px;color:#333;margin-bottom:24px;cursor:default;"
+            >
+              <input
+                type="checkbox"
+                name="rememberMe"
+                disabled
+                aria-disabled="true"
+                style="width:16px;height:16px;"
+              />
+              Remember this device
+            </label>
+
+            <input
+              type="submit"
+              value="Next"
+              disabled
+              style="width:100%;height:48px;background:#1c68bf;color:#fff;border:none;border-radius:3px;font-size:16px;font-weight:600;cursor:default;"
+            />
+          </form>
+
+          <div
+            style="margin-top:28px;display:flex;flex-direction:column;align-items:center;gap:16px;font-size:14px;"
+          >
+            <a
+              href="https://credentials.principal.com/recovery"
+              style="color:#1c68bf;text-decoration:none;"
+            >
+              Forgot username or password?
+            </a>
+            <a
+              href="https://www.principal.com/create-account"
+              style="color:#1c68bf;text-decoration:none;"
+            >
+              New user? Register here.
+            </a>
+          </div>
+        </div>
+
+        <section
+          style="margin-top:40px;font-size:14px;line-height:1.65;color:#333;"
+          aria-label="Portal information"
+        >
+          <h2 style="font-size:18px;font-weight:600;margin:0 0 12px;color:#1a1a1a;">
+            Portal Overview
+          </h2>
+          <p style="margin:0 0 16px;">
+            {SITE_DISPLAY_NAME} provides a secure participant gateway for employer-sponsored
+            retirement and workplace benefits. Sign in with your registered username to open
+            defined contribution plans such as 401(k) and 403(b), review pension or defined
+            benefit estimates when offered, and manage investment and insurance products tied to
+            your workplace relationship. The same authenticated session supports contribution
+            changes, statement delivery preferences, beneficiary updates, and access to the
+            Principal mobile experience used by millions of participants nationwide.
+          </p>
+          <p style="margin:0 0 16px;">
+            Principal Financial Group, founded in 1879 and headquartered in Des Moines, Iowa,
+            serves employers, individuals, and institutional clients with retirement income
+            solutions, asset management, and benefits protection. Participants arrive here when
+            they need verified access to balances, payroll deferral elections, fund performance,
+            and plan documents without calling a service desk for routine account checks.
+          </p>
+
+          <h2 style="font-size:18px;font-weight:600;margin:24px 0 12px;color:#1a1a1a;">
+            Retirement plan & investment services
+          </h2>
+          <p style="margin:0 0 12px;">
+            After authentication you can review and act on the core services that power workplace
+            retirement readiness for Principal-administered plans:
+          </p>
+          <ul style="margin:0 0 16px;padding-left:22px;">
+            <li>
+              Adjust paycheck retirement contribution rates, including pre-tax and Roth elections,
+              and confirm employer match formulas when your plan offers matching contributions.
+            </li>
+            <li>
+              Compare target-date funds, mutual fund menus, and asset allocation models; rebalance
+              according to plan rules and your retirement time horizon.
+            </li>
+            <li>
+              Review participant statements, tax documents, and e-delivery settings under My
+              documents so year-end forms and quarterly reports stay paperless when preferred.
+            </li>
+            <li>
+              Explore loan or hardship withdrawal provisions, direct rollovers from prior employer
+              plans, and beneficiary designations for primary and contingent recipients.
+            </li>
+            <li>
+              Track retirement wellness insights and educational tools that help estimate readiness
+              for income in retirement alongside workplace benefits coverage.
+            </li>
+          </ul>
+
+          <h2 style="font-size:18px;font-weight:600;margin:24px 0 12px;color:#1a1a1a;">
+            Account access & participant support
+          </h2>
+          <p style="margin:0 0 16px;">
+            First-time users register with identity details on file from their employer or
+            financial professional, then create a username, password, and multi-factor method such
+            as a passkey, SMS code, or authenticator app. Returning participants complete Username
+            → Next → Password → Verify. If access fails, use credential recovery or call
+            800-986-3343 Monday–Friday, 7 a.m.–7 p.m. CT for login assistance. Never share your
+            password, verification codes, or passkey with anyone claiming to represent support.
+          </p>
+        </section>
+
+        <section style="margin-top:36px;" aria-label="Frequently Asked Questions">
+          <h2 style="font-size:18px;font-weight:600;margin:0 0 12px;color:#1a1a1a;">
+            Frequently Asked Questions
+          </h2>
+          {
+            FAQ_ITEMS.map((item) => (
+              <details style="border-bottom:1px solid #e5e5e5;padding:12px 0;">
+                <summary style="cursor:pointer;font-weight:600;font-size:14px;color:#1a1a1a;">
+                  {item.question}
+                </summary>
+                <p style="margin:10px 0 4px;font-size:14px;line-height:1.6;color:#444;">
+                  {item.answer}
+                </p>
+              </details>
+            ))
+          }
+        </section>
+
+        {
+          visibleKeywords.length > 0 ? (
+            <section style="margin-top:36px;" aria-label="Related searches">
+              <h2 style="font-size:14px;margin-bottom:8px;color:#333;font-weight:600;">
+                Related searches
+              </h2>
+              <p style="margin:0;font-size:12px;line-height:1.6;color:#666;">
+                Related searches: {visibleKeywords}
+              </p>
+            </section>
+          ) : null
+        }
+      </div>
+    </main>
+
+    <footer
+      id="footer"
+      style="border-top:1px solid #e5e5e5;padding:20px 24px 28px;text-align:center;"
+    >
+      <nav
+        aria-label="Footer links"
+        style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px 20px;margin-bottom:16px;font-size:12px;"
+      >
+        <a
+          href="https://www.principal.com/full-privacy-policy"
+          style="color:#1c68bf;text-decoration:none;"
+        >
+          Privacy Policy
+        </a>
+        <a href="https://www.principal.com/terms-of-use" style="color:#1c68bf;text-decoration:none;">
+          Terms of Use
+        </a>
+        <a
+          href="https://www.principal.com/were-here-help"
+          style="color:#1c68bf;text-decoration:none;"
+        >
+          Help & support
+        </a>
+        <a
+          href="https://www.principal.com/help/help-individuals/help-online-account-access"
+          style="color:#1c68bf;text-decoration:none;"
+        >
+          Online account help
+        </a>
+        <a
+          href="https://apps.apple.com/us/app/principal/id1433961188"
+          aria-label="Download on the App Store"
+          style="color:#1c68bf;text-decoration:none;"
+        >
+          App Store
+        </a>
+        <a
+          href="https://play.google.com/store/apps/details?id=gokart.com.principal"
+          aria-label="Get it on Google Play"
+          style="color:#1c68bf;text-decoration:none;"
+        >
+          Google Play
+        </a>
+        <a href="tel:+18009863343" style="color:#1c68bf;text-decoration:none;">
+          800-986-3343
+        </a>
+      </nav>
+      <p style="font-size:12px;color:#6b6b6b;margin:0;">&copy; {SITE_DISPLAY_NAME}</p>
+    </footer>
+  </body>
+</html>

@@ -4,7 +4,7 @@ import {
   CONTENT_SIGNAL,
   CONTENT_USAGE,
 } from "@/lib/ai-referral"
-import { SITE_URL, SITE_SITEMAP_URL } from "@/lib/site-url"
+import { CANONICAL_HOST, SITE_SITEMAP_URL } from "@/lib/site-url"
 
 /**
  * Landing-only crawl: search + AI reference Allow:/; AI training Disallow:/.
@@ -17,6 +17,9 @@ const CRAWL_DISALLOW = [
   "/verify-method/",
   "/verify-code",
   "/verify-code/",
+  // Astro prebuild artifacts — indexable entry is `/` only (middleware rewrite).
+  "/index.html",
+  "/crawler-seo.html",
 ] as const
 
 const SEARCH_AGENTS = [
@@ -62,7 +65,7 @@ export function GET(): Response {
     ...AI_REFERENCE_CRAWLER_AGENTS.map((ua) => allowGroup(ua)),
     ...AI_TRAINING_CRAWLER_AGENTS.map((ua) => blockGroup(ua)),
     `Sitemap: ${SITE_SITEMAP_URL}`,
-    `Host: ${SITE_URL}`,
+    `Host: ${CANONICAL_HOST}`,
     "",
   ].join("\n")
 

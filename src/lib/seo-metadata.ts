@@ -5,7 +5,7 @@
 import { CANONICAL_HOST, SITE_DISPLAY_NAME } from "@/lib/site-url"
 import { LAYOUT_DESCRIPTION } from "./meta-description"
 import { SITE_KEYWORDS } from "./seo-keywords"
-export const SITE_TITLE = `${SITE_DISPLAY_NAME} Financial Sign-In | Retirement & Benefits`
+export const SITE_TITLE = `Retirement Account Sign-In | ${SITE_DISPLAY_NAME}`
 
 export const SITE_DESCRIPTION = LAYOUT_DESCRIPTION
 export { LAYOUT_DESCRIPTION }

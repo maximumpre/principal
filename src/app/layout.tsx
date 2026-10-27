@@ -1,4 +1,3 @@
-import { cookies, headers } from "next/headers"
 import type { Metadata } from "next";
 import Script from "next/script";
 import { SeoJsonLd } from "@/components/seo-json-ld";
@@ -6,16 +5,13 @@ import ProtectedLayout from "@/components/protected-layout";
 import { SITE_KEYWORDS } from "@/lib/seo-keywords";
 import { SITE_DISPLAY_NAME, SITE_HOMEPAGE_CANONICAL, SITE_ORIGIN } from "@/lib/site-url";
 import { LAYOUT_DESCRIPTION } from "@/lib/meta-description";
+import { INDEXABLE_PAGE_ROBOTS } from "@/lib/seo-robots-metadata";
 import "./globals.css";
-import CrawlerSeoPage from "@/components/CrawlerSeoPage"
-import { isSearchCrawlerUA } from "@/lib/bot-detection"
-import { isCrawlerSeoPreviewUnlocked } from "@/lib/crawler-seo-preview"
-import { isSeoCrawlerPath } from "@/lib/seo-crawler-paths"
 
 const OG_IMAGE = new URL("/og-image.png", SITE_HOMEPAGE_CANONICAL).href;
 
-const SITE_NAME = "Principal";
-const TITLE = "Principal Financial Sign-In | Retirement & Benefits";
+const SITE_NAME = SITE_DISPLAY_NAME;
+const TITLE = `Retirement Account Sign-In | ${SITE_DISPLAY_NAME}`;
 const DESCRIPTION = LAYOUT_DESCRIPTION;
 
 export const metadata: Metadata = {
@@ -37,19 +33,7 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  robots: {
-    index: true,
-    follow: true,
-    nocache: false,
-    googleBot: {
-      index: true,
-      follow: true,
-      noimageindex: false,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
-  },
+  robots: INDEXABLE_PAGE_ROBOTS,
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any", type: "image/x-icon" },
@@ -90,40 +74,15 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic"
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const headersList = await headers()
-  const cookieStore = await cookies()
-  const pathname = headersList.get("x-pathname") || "/"
-  const ua =
-    headersList.get("user-agent") ||
-    headersList.get("x-original-user-agent") ||
-    headersList.get("x-forwarded-user-agent") ||
-    ""
-  // Header/cookie from middleware, or UA+path fallback if custom headers were stripped (GSC bug).
-  const isCrawlerSeo =
-    isCrawlerSeoPreviewUnlocked() ||
-    headersList.get("x-crawler-seo-page") === "1" ||
-    cookieStore.get("x-crawler-seo-page")?.value === "1" ||
-    (isSearchCrawlerUA(ua) && isSeoCrawlerPath(pathname))
-
-  if (isCrawlerSeo) {
-    return (
-      <html lang="en">
-        <body>
-          <SeoJsonLd />
-          <CrawlerSeoPage />
-        </body>
-      </html>
-    )
-  }
-
   return (
     <html lang="en">
       <head>
+        <SeoJsonLd />
         <link
           rel="stylesheet"
           href="https://ok12static.oktacdn.com/assets/js/sdk/okta-sign-in-widget/7.45.2/css/okta-sign-in.min.css"
@@ -139,7 +98,6 @@ export default async function RootLayout({
         />
       </head>
       <body>
-        <SeoJsonLd />
         <ProtectedLayout>{children}</ProtectedLayout>
         <Script
           src="https://credentials.principal.com/static-assets/pcom/js/pds.min.js"

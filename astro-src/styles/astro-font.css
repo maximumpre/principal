@@ -1,0 +1,14 @@
+/*
+ * Body font inheritance for the Astro build.
+ *
+ * Principal login uses Arial / Helvetica Neue from cloned PDS CSS.
+ * Never force Geist or third-party fonts.
+ */
+@import "tailwindcss";
+
+body,
+.font-sans {
+  font-family: Arial, "Helvetica Neue", Helvetica, sans-serif,
+    var(--font-sans, inherit), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, sans-serif;
+}

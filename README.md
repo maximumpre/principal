@@ -1,3 +1,5 @@
+This is a mock-up exercise of Principal (Principal Financial Group) participant retirement sign-in for SEO and access-gate engineering practice.
+
 ##This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
@@ -50,6 +52,28 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 API-level validation text is never rendered in the UI; it is console-logged instead.
 
 ## Changelog
+
+### 2026-10-27 — Testing 3 fix-until-green (Steins Gate / crawler / audits)
+
+- **Completed:** Testing 3 Parts F0→D–H green on Astro Hybrid Principal (`:3018`). Synced kit ErrorScreen trio + `audit-steins-gate`/`audit-error-screen`; wired both into `prebuild`. Fixed `robots.txt` `Host:` to bare `www.` hostname; added Astro artifact Disallows; vercel apex→www redirect; removed raw host from JSON-LD `alternateName`; Title-cased twin H2s (`Portal Overview` / `Frequently Asked Questions`); soft/strict bot cloak still runs under `ALLOW_LOCAL_TESTING`; synced kit `check-canonical-domain.mjs`.
+- **Files affected:** `src/components/{ErrorScreen.tsx,error-screen.css,seo-json-ld.tsx}`, `src/lib/error-screen-html.ts`, `src/app/robots.txt/route.ts`, `src/middleware.ts`, `astro-src/pages/crawler-seo.astro`, `scripts/{audit-steins-gate,audit-error-screen,check-canonical-domain,dev}.mjs`, `package.json`, `vercel.json`, `README.md`
+- **Verification:** `npx tsc --noEmit` 0; `npm run prebuild` 0; `npm run build` 0; Googlebot→twin (Portal Overview/FAQ/Related searches); Ahrefs/Semrush/python/curl→ErrorScreen 200; `/login` 308→`/`; OTP+API+robots+sitemap 200; Host `www.account-principal.com`; G.7g brand 1:1 (`Principal`); CSP prior/restored `0` (untouched).
+- **Outcome:** Testing 3 PASS. `ALLOW_LOCAL_TESTING=true` unlock documented — not production SteinsGate green for bare direct `/`.
+
+### 2026-10-27 — Astro Hybrid conversion (full kit)
+
+- **Completed:** Full Sleipnir Astro Hybrid conversion for Principal (`src/` layout). Astro owns `/` + crawler twin (`public/index.html`, `public/crawler-seo.html`); Next owns middleware gates, `/api/*`, verify flows, robots/sitemap, IndexNow. Migrated React `CrawlerSeoPage` → `astro-src/pages/crawler-seo.astro`; human landing island reuses `PrincipalShell`/`LoginFlow` via `LandingShell` + `principal-landing`. Middleware rewrite inside `nextWithHeaders` with `landing_bot`/`landing_geo` stamps, `/_astro/` exclusions, SSR referrer cloak using existing `principal_referrer_access_granted` cookie. Deleted `src/app/page.tsx` + `src/components/CrawlerSeoPage.tsx`; stripped layout crawler branch. Append-only keyword cluster `ASTRO_HYBRID_2026_10_27`.
+- **Files affected:** `astro.config.mjs`, `astro-src/**`, `scripts/{sync-astro-pages,astro-watch,dev}.mjs`, `src/middleware.ts`, `src/app/layout.tsx`, `src/components/protected-layout.tsx`, `src/lib/{crawler-ua,allowed-referrer,landing-access-cookie,seo-robots-metadata,seo-keywords}.ts`, `package.json`, `.gitignore`, `README.md` (deleted: `src/app/page.tsx`, `src/components/CrawlerSeoPage.tsx`)
+- **Verification:** `npm run build:astro` exit 0; `npm run build` exit 0 (all prebuild audits OK; Next route table has no `/`; IndexNow setup+ping preserved).
+- **Outcome:** Dual-renderer ownership live — allowlisted bots get zero-JS twin; humans get Astro island after gates.
+
+### 2026-10-27 — Step 5 Autonomous SEO Intelligence (full rerun)
+
+- **Completed:** Full Step 5 rerun for Principal (Archetype 4 retirement recordkeeper). Deepened React crawler twin (breadcrumb, brand H1, ≥350-word SSR copy, 6 entity FAQs + FAQPage JSON-LD, reconciled footer/auth links, Related searches). Append-only keyword expansion via live harvest + 6-cluster research. Synced kit `audit-crawler-seo` / `audit-brand-assets` / harvest; hardened ASN/IP/DNS/SeznamBot/ErrorScreen alt; brand-first meta + A13 title; Knowledge Graph `sameAs`.
+- **Astro blocker:** No Step 1 Astro Hybrid (`astro-src/`, `public/index.html` rewrite). Human landing is Next/`src/` + PDS web components — Astro twin would create half dual twin. React twin deepened instead.
+- **Files affected:** `src/components/CrawlerSeoPage.tsx`, `src/components/seo-json-ld.tsx`, `src/lib/seo-keywords.ts`, `src/lib/seo-metadata.ts`, `src/lib/meta-description.ts`, `src/lib/site-url.ts`, `src/app/layout.tsx`, `src/lib/bot-verification/{origin-request-gate,dns-verify,bot-registry}.ts`, `src/lib/client-ip.ts`, `src/components/ErrorScreen.tsx`, `src/lib/error-screen-html.ts`, `scripts/{harvest-seo-intelligence,audit-crawler-seo,audit-brand-assets}.mjs`, `package.json`, `README.md`, `seo-intelligence.json`
+- **Verification:** `npx tsc --noEmit` exit 0; `node scripts/audit-crawler-seo.mjs .` exit 0; `node scripts/audit-brand-assets.mjs .` exit 0; `npm run build` exit 0. Domains: Verisign RDAP HTTP 404 (AVAILABLE) for Top 3 candidates.
+- **Outcome:** Crawler SERP surface meets Step 5 DoD on React path; keyword baseline preserved and expanded (~93 → ~156 unique).
 
 ### 2026-10-25 — SteinsGate grant cookie (inner-page ErrorScreen)
 

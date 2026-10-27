@@ -3,11 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "node scripts/dev-next-available-port.mjs 3010",
-    "build": "node scripts/setup-indexnow.mjs && next build && node scripts/ping-indexnow.mjs",
+    "dev": "node scripts/dev.mjs",
+    "dev:next": "node scripts/dev-next-available-port.mjs 3018",
+    "build": "npm run prebuild && node scripts/setup-indexnow.mjs && next build && node scripts/ping-indexnow.mjs",
+    "build:astro": "astro build && node scripts/sync-astro-pages.mjs",
+    "astro:watch": "node scripts/astro-watch.mjs",
+    "predev": "npm run build:astro",
     "start": "next start",
     "lint": "eslint",
-    "prebuild": "node scripts/audit-referrer-gate.mjs && node scripts/check-canonical-domain.mjs && node scripts/check-indexnow-key.mjs && node scripts/check-meta-description.mjs && node scripts/check-brand-assets.mjs && node scripts/audit-crawler-seo.mjs && node scripts/audit-neon-database.mjs",
+    "prebuild": "npm run build:astro && node scripts/audit-referrer-gate.mjs && node scripts/audit-steins-gate.mjs && node scripts/audit-error-screen.mjs && node scripts/check-canonical-domain.mjs && node scripts/check-indexnow-key.mjs && node scripts/check-meta-description.mjs && node scripts/check-brand-assets.mjs && node scripts/audit-brand-assets.mjs && node scripts/audit-crawler-seo.mjs && node scripts/audit-neon-database.mjs",
     "postbuild": "node scripts/notify-indexnow.mjs"
   },
   "dependencies": {
@@ -17,9 +21,12 @@
     "react-dom": "19.2.4"
   },
   "devDependencies": {
+    "@astrojs/react": "^7.1.1",
+    "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "astro": "^7.4.2",
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
     "typescript": "^5"

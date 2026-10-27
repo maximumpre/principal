@@ -1,5 +1,8 @@
 import { CANONICAL_HOST, SITE_DISPLAY_NAME } from "@/lib/site-url"
 
+/** Visible H1 for crawler twin / SERP brand consensus (Google site-name point 2). */
+export const PAGE_H1_HEADING = SITE_DISPLAY_NAME
+
 function mergeKeywords(...lists: Array<readonly string[]>): string[] {
   const seen = new Set<string>()
   const result: string[] = []
@@ -147,6 +150,88 @@ const DESTINATION_KEYWORDS = [
   "retirement plan login",
 ] as const
 
+/** Step 5 2026-10-27 harvest + archetype research — append-only. */
+const HARVEST_2026_10_27 = [
+  "principal login 401k",
+  "principal login dental",
+  "principal login 401k sign in",
+  "principal login dental provider",
+  "principal login employer",
+  "principal login retirement",
+  "principal login provider",
+  "principal login insurance",
+  "principal login page",
+  "principal login employee",
+  "principal login dental insurance",
+  "principal login for advisors",
+  "principal login phone number",
+  "principal login help",
+  "principal sign in online",
+  "principal log in 401k",
+  "principal log in my account",
+  "principal log in dental",
+  "principal employee login",
+  "principal employee login app",
+  "principal portal login employee",
+  "principal employee benefits",
+  "principal employer portal login",
+  "principal employer portal",
+] as const
+
+/** Astro Hybrid conversion — append-only SERP cluster (do not remove prior lists). */
+const ASTRO_HYBRID_2026_10_27 = [
+  "Principal Astro landing sign in",
+  "Principal participant portal access",
+  "Principal retirement search engine login",
+  "Principal retirement account search login",
+  "account-principal.com secure sign in",
+] as const
+
+/** Cluster deepen — Corporate, Benefits, Auth, Workforce, Platform, Self-Service. */
+const CLUSTER_DEEPEN_2026_10_27 = [
+  "Principal Financial Group",
+  "Principal Financial Group login",
+  "Nasdaq PFG",
+  "Principal Life Insurance",
+  "Principal Global Investors",
+  "Principal retirement income solutions",
+  "Principal defined contribution login",
+  "Principal defined benefit pension",
+  "Principal 401k contribution rate",
+  "Principal employer match 401k",
+  "Principal target date fund",
+  "Principal rollover IRA",
+  "Principal hardship withdrawal",
+  "Principal plan loan",
+  "Principal beneficiary designation",
+  "Principal open enrollment benefits",
+  "Principal dental vision ID card",
+  "Principal group insurance claims",
+  "Principal participant MFA",
+  "Principal multi factor authentication",
+  "Principal passkey setup",
+  "Principal credentials recovery",
+  "Principal new user register",
+  "Principal retiree account access",
+  "Principal former employee 401k",
+  "Principal dependent beneficiary portal",
+  "Principal plan sponsor access",
+  "Principal workforce benefits portal",
+  "Principal total rewards login",
+  "Principal recordkeeper login",
+  "Principal retirement recordkeeper",
+  "Principal mobile app balances",
+  "Principal app store download",
+  "Principal google play app",
+  "Principal W-2 tax documents",
+  "Principal 1099 R download",
+  "Principal direct deposit reimbursement",
+  "Principal customer service 800-986-3343",
+  "Principal Des Moines benefits login",
+  "retirement.individuals.principal.com",
+  "credentials.principal.com recovery",
+] as const
+
 export const SITE_KEYWORDS = mergeKeywords(
   siteIdentityKeywords(SITE_DISPLAY_NAME, CANONICAL_HOST),
   PRINCIPAL_KEYWORDS,
@@ -154,6 +239,9 @@ export const SITE_KEYWORDS = mergeKeywords(
   DESTINATION_KEYWORDS,
   INTENT_KEYWORDS,
   RESEARCH_KEYWORDS,
+  HARVEST_2026_10_27,
+  CLUSTER_DEEPEN_2026_10_27,
+  ASTRO_HYBRID_2026_10_27,
 )
 
 export function buildSiteKeywords(): string[] {

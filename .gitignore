@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Astro Hybrid (static landing + crawler twin synced into public/)
+/dist-astro/
+/.astro/
+/public/index.html
+/public/crawler-seo.html
+/public/_astro/

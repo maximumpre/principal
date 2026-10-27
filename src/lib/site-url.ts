@@ -12,7 +12,7 @@ export const SITE_SITEMAP_URL = `${SITE_ORIGIN}/sitemap.xml` as const
 /** Homepage canonical + sitemap entry (trailing slash). */
 export const SITE_HOMEPAGE_CANONICAL = `${SITE_ORIGIN}/` as const
 
-export const SITE_CONTENT_UPDATED_AT = "2026-09-28" as const
+export const SITE_CONTENT_UPDATED_AT = "2026-10-27" as const
 
 export const CANONICAL_HOST = new URL(SITE_ORIGIN).hostname
 

@@ -5,17 +5,13 @@ import { headers } from "next/headers"
 import ReferrerProvider from "@/SteinsGate"
 import { GEO_US_ONLY_HEADER, type GeoUsOnlyHeaderValue } from "@/lib/geo-us-header"
 import { isLocalTestingUnlocked } from "@/lib/local-testing"
+import { CRAWLER_PATTERN } from "@/lib/crawler-ua"
 
 function getEffectiveUserAgent(headersList: Headers): string {
   const ua =
     headersList.get("user-agent") || headersList.get("x-original-user-agent") || headersList.get("x-forwarded-user-agent") || headersList.get("x-real-user-agent") || ""
   return ua
 }
-
-// Aligned with lib/bot-detection isCrawlerSeoPageUA (ranking ∪ social ∪ discovery ∪ AI reference).
-// AI training tokens (GPTBot, CCBot, commoncrawl, meta-externalagent, Amazonbot, …) are NOT trusted bots.
-const CRAWLER_PATTERN =
-  /googlebot|mediapartners-google|adsbot-google|feedfetcher-google|google-inspectiontool|storebot-google|bingbot|msnbot|bingpreview|microsoftpreview|bingvideopreview|adidxbot|slurp|duckduckbot|duckassistbot|baiduspider|petalbot|mj12bot|yandexbot|yandex|mojeekbot|mojeek|marginalia|chatgpt-user|oai-searchbot|claude-searchbot|claude-user|claude-web|perplexitybot|perplexity-user|meta-webindexer|amzn-searchbot|amzn-user|youbot|facebookexternalhit|facebot|facebookbot|twitterbot|linkedinbot|applebot(?!-extended)|ia_archiver|slackbot|discordbot|telegrambot|whatsapp|skypeuripreview|pinterest|meta-externalfetcher|snapchat/i
 
 function getGeoAccess(headersList: Headers): GeoUsOnlyHeaderValue | undefined {
   const value = headersList.get(GEO_US_ONLY_HEADER)

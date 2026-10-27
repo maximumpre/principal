@@ -55,14 +55,17 @@ export function isPrivateOrLocalIp(ip: string): boolean {
   return false
 }
 
-/** Prefer platform headers; fail open when ASN is unknown (no outbound geo lookup). */
+function isOnVercel(): boolean {
+  return process.env.VERCEL === "1" || Boolean(process.env.VERCEL_ENV)
+}
+
+/**
+ * Request ASN — platform headers only (Vercel-owned `x-vercel-ip-as-number`).
+ * Never trust client-spoofable `x-asn` / `cf-ipasnum`.
+ */
 export function getRequestAsn(request: NextRequest): string | null {
-  const raw =
-    request.headers.get("x-vercel-ip-as-number") ||
-    request.headers.get("x-asn") ||
-    request.headers.get("cf-ipasnum") ||
-    ""
-  return normalizeAsn(raw)
+  if (!isOnVercel()) return null
+  return normalizeAsn(request.headers.get("x-vercel-ip-as-number") || "")
 }
 
 export function isOriginBlockedHostingAsn(asn: string | null | undefined): boolean {
